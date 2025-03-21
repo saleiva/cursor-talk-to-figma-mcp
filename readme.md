@@ -93,6 +93,7 @@ The MCP server provides the following tools for interacting with Figma:
 ### Modifying text content
 
 - `set_text_content` - Set the text content of an existing text node
+- `get_text_content` - Get the text content of an existing text node
 
 ### Styling
 

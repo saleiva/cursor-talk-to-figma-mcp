@@ -712,6 +712,38 @@ server.tool(
   }
 );
 
+// Read Text Content Tool
+server.tool(
+  "get_text_content",
+  "Get the text content of an existing text node",
+  {
+    nodeId: z.string().describe("The ID of the text node to read")
+  },
+  async ({ nodeId }) => {
+    try {
+      const result = await sendCommandToFigma('get_text_content', { nodeId });
+      const typedResult = result as { name: string, characters: string, fontSize: number };
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Text content of node "${typedResult.name}": "${typedResult.characters}"\nFont size: ${typedResult.fontSize}`
+          }
+        ]
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error getting text content: ${error instanceof Error ? error.message : String(error)}`
+          }
+        ]
+      };
+    }
+  }
+);
+
 // Define design strategy prompt
 server.prompt(
   "design_strategy",
@@ -759,6 +791,7 @@ server.prompt(
 
 6. Mofifying existing elements:
   - use set_text_content() to modify text content.
+  - use get_text_content() to read text content.
 
 7. Visual Hierarchy:
    - Position elements in logical reading order (top to bottom)
@@ -821,7 +854,8 @@ type FigmaCommand =
   | 'execute_code'
   | 'join'
   | 'set_corner_radius'
-  | 'set_text_content';
+  | 'set_text_content'
+  | 'get_text_content';
 
 // Helper function to process Figma node responses
 function processFigmaNodeResponse(result: unknown): any {
